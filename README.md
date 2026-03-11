@@ -1,15 +1,31 @@
 # SQL Server ERP Scripts
 
-Coleção de scripts SQL usados para análise e troubleshooting em sistemas ERP.
+Coleção de scripts SQL usados para análise, manutenção e troubleshooting em sistemas ERP.
 
-## Conteúdo
+## 📂 Estrutura
 
-- Identificação de produtos sem venda
-- Correção de dados inconsistentes
-- Scripts de manutenção
+queries  
+Scripts de consulta e análise de dados.
 
-## Tecnologias
+procedures  
+Procedures para manutenção e automação.
 
-- SQL Server
-- ERP
-- Automação comercial
+## 📊 Exemplo de uso
+
+Script para identificar produtos sem venda nos últimos 90 dias:
+
+```sql
+SELECT 
+    p.prod_idproduto,
+    p.prod_descricao,
+    MAX(m.sys_dinsert) AS ultima_venda
+FROM tbproduto p
+LEFT JOIN tbmovprod m
+    ON p.prod_idproduto = m.prod_idproduto
+GROUP BY 
+    p.prod_idproduto,
+    p.prod_descricao
+HAVING 
+    MAX(m.sys_dinsert) < DATEADD(DAY, -90, GETDATE())
+    OR MAX(m.sys_dinsert) IS NULL
+ORDER BY ultima_venda
